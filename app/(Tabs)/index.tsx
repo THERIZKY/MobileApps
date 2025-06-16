@@ -1,7 +1,8 @@
 import MovieCard from "@/components/MovieCard";
 import { fetchMovies } from "@/services/api";
 import useFetch from "@/services/useFetch";
-import { useRouter } from "expo-router";
+import type { ProductsCardProps } from "@/types";
+import React, { useMemo } from "react";
 import {
     ActivityIndicator,
     FlatList,
@@ -10,71 +11,78 @@ import {
     View,
 } from "react-native";
 
-export default function Index() {
-    const router = useRouter();
+export default function MovieList() {
     const { width } = useWindowDimensions();
-
-    // Misal breakpoint sederhana:
-    const numColumns = width >= 768 ? 4 : 2; // 768px dianggap tablet
+    const numColumns = useMemo(() => (width >= 768 ? 4 : 2), [width]);
 
     const {
         data: items,
         loading: moviesLoading,
         error: moviesError,
-    } = useFetch(() =>
-        fetchMovies({
-            query: "",
-        })
+    } = useFetch(() => fetchMovies({ query: "" }));
+
+    // Memoized components prevent unnecessary re-renders
+    const renderItem = useMemo(
+        () =>
+            ({ item }: { item: ProductsCardProps }) =>
+                <MovieCard {...item} />,
+        []
     );
 
+    const ListHeader = useMemo(
+        () => (
+            <View className="mb-4">
+                <Text className="text-2xl text-white font-bold text-center">
+                    Top Items
+                </Text>
+            </View>
+        ),
+        []
+    );
+
+    if (moviesLoading) {
+        return (
+            <View className="flex-1 bg-gray-900 justify-center">
+                <ActivityIndicator size="large" color="#ffffff" />
+            </View>
+        );
+    }
+
+    if (moviesError) {
+        return (
+            <View className="flex-1 bg-gray-900 justify-center items-center">
+                <Text className="text-red-500 text-lg">{moviesError}</Text>
+            </View>
+        );
+    }
+
     return (
-        <View className="flex-1  bg-gray-900">
-            {moviesLoading ? (
-                <View className="flex-1 justify-center items-center">
-                    <ActivityIndicator
-                        size={"large"}
-                        color={"#ffffff"}
-                        className="mt-10 self-center"
-                    />
-                </View>
-            ) : moviesError ? (
-                <View className="flex-1 justify-center items-center">
-                    <Text className="text-red-500">{moviesError}</Text>
-                </View>
-            ) : (
-                <View className="flex-1 mt-5">
-                    <>
-                        <FlatList
-                            data={items}
-                            contentContainerStyle={{
-                                width: "100%",
-                            }}
-                            columnWrapperStyle={{
-                                justifyContent: "center",
-                                gap: 40,
-                                paddingTop: 10,
-                                paddingRight: 5,
-                                paddingBottom: 10,
-                            }}
-                            className="mt-2 pb-32"
-                            numColumns={numColumns}
-                            keyExtractor={(item) => item.id.toString()}
-                            ListHeaderComponent={() => (
-                                <View className="flex-row items-center justify-center mb-2">
-                                    <Text className="text-2xl text-white font-bold">
-                                        Top Items
-                                    </Text>
-                                </View>
-                            )}
-                            renderItem={({
-                                item,
-                            }: {
-                                item: ProductsCardProps;
-                            }) => <MovieCard {...item} />}
-                        />
-                    </>
-                </View>
-            )}
+        <View className="flex-1 bg-gray-900 pt-5">
+            <FlatList
+                data={items}
+                key={`list-${numColumns}`} // Reset list on column change
+                keyExtractor={(item) => item.id.toString()}
+                numColumns={numColumns}
+                ListHeaderComponent={ListHeader}
+                renderItem={renderItem}
+                contentContainerStyle={{ paddingBottom: 80 }}
+                columnWrapperStyle={
+                    numColumns > 1
+                        ? {
+                              justifyContent: "space-between",
+                              paddingHorizontal: 16,
+                              gap: 8,
+                              marginBottom: 16,
+                          }
+                        : undefined
+                }
+                // Performance optimizations:
+                initialNumToRender={10}
+                maxToRenderPerBatch={8}
+                windowSize={11}
+                removeClippedSubviews={true}
+                showsVerticalScrollIndicator={false}
+            />
         </View>
     );
 }

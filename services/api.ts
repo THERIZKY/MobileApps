@@ -8,7 +8,7 @@ export const REQUEST_CONFIG = {
 
 export const fetchMovies = async ({ query }: { query?: string }) => {
     const endpoint = query
-        ? `${REQUEST_CONFIG.BASE_URL}/api/menu/[${query?.toString()}]`
+        ? `${REQUEST_CONFIG.BASE_URL}/api/menu${query?.toString()}`
         : `${REQUEST_CONFIG.BASE_URL}/api/menu`;
 
     const response = await fetch(endpoint, {
