@@ -6,7 +6,7 @@ export const REQUEST_CONFIG = {
     },
 };
 
-export const fetchMovies = async ({ query }: { query?: string }) => {
+export const fetchMenus = async ({ query }: { query?: string }) => {
     const endpoint = query
         ? `${REQUEST_CONFIG.BASE_URL}/api/menu${query?.toString()}`
         : `${REQUEST_CONFIG.BASE_URL}/api/menu`;
@@ -21,8 +21,6 @@ export const fetchMovies = async ({ query }: { query?: string }) => {
     }
 
     const data = await response.json();
-
-    console.log("Fetched movies:", data.data);
 
     return data.data;
 };

@@ -1,88 +1,64 @@
-import MovieCard from "@/components/MovieCard";
-import { fetchMovies } from "@/services/api";
-import useFetch from "@/services/useFetch";
-import type { ProductsCardProps } from "@/types";
-import React, { useMemo } from "react";
-import {
-    ActivityIndicator,
-    FlatList,
-    Text,
-    useWindowDimensions,
-    View,
-} from "react-native";
+import BottomTopItems from "@/src/components/layouts/BottomTopItems";
+import CategoriesLayouts from "@/src/components/layouts/CategoriesLayouts";
+import LogoHeader from "@/src/components/layouts/LogoHeader";
+import SearchBar from "@/src/components/layouts/SearchBar";
+import TopItemLayouts from "@/src/components/layouts/TopItemsLayout";
+import { useDevice } from "@/src/hooks/useDevice";
+import { useTheme } from "@/src/hooks/useTheme";
+import { fetchMenus } from "@/src/services/api";
+import useFetch from "@/src/services/useFetch";
+import React from "react";
+import { ActivityIndicator, ScrollView, Text, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
-export default function MovieList() {
-    const { width } = useWindowDimensions();
-    const numColumns = useMemo(() => (width >= 768 ? 4 : 2), [width]);
+export default function HomeScreen() {
+    const { isTablet } = useDevice();
+    const { colors } = useTheme();
 
+    // Uncomment ini nanti kalau API sudah ready
     const {
-        data: items,
-        loading: moviesLoading,
-        error: moviesError,
-    } = useFetch(() => fetchMovies({ query: "" }));
-
-    // Memoized components prevent unnecessary re-renders
-    const renderItem = useMemo(
-        () =>
-            ({ item }: { item: ProductsCardProps }) =>
-                <MovieCard {...item} />,
-        []
-    );
-
-    const ListHeader = useMemo(
-        () => (
-            <View className="mb-4">
-                <Text className="text-2xl text-white font-bold text-center">
-                    Top Items
-                </Text>
-            </View>
-        ),
-        []
-    );
-
-    if (moviesLoading) {
-        return (
-            <View className="flex-1 bg-gray-900 justify-center">
-                <ActivityIndicator size="large" color="#ffffff" />
-            </View>
-        );
-    }
-
-    if (moviesError) {
-        return (
-            <View className="flex-1 bg-gray-900 justify-center items-center">
-                <Text className="text-red-500 text-lg">{moviesError}</Text>
-            </View>
-        );
-    }
+        data: topItems,
+        loading: itemsLoading,
+        error: itemsError,
+    } = useFetch(() => fetchMenus({ query: "" }));
 
     return (
-        <View className="flex-1 bg-gray-900 pt-5">
-            <FlatList
-                data={items}
-                key={`list-${numColumns}`} // Reset list on column change
-                keyExtractor={(item) => item.id.toString()}
-                numColumns={numColumns}
-                ListHeaderComponent={ListHeader}
-                renderItem={renderItem}
-                contentContainerStyle={{ paddingBottom: 80 }}
-                columnWrapperStyle={
-                    numColumns > 1
-                        ? {
-                              justifyContent: "space-between",
-                              paddingHorizontal: 16,
-                              gap: 8,
-                              marginBottom: 16,
-                          }
-                        : undefined
-                }
-                // Performance optimizations:
-                initialNumToRender={10}
-                maxToRenderPerBatch={8}
-                windowSize={11}
-                removeClippedSubviews={true}
+        <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }}>
+            <ScrollView
+                style={{ flex: 1 }}
                 showsVerticalScrollIndicator={false}
-            />
-        </View>
+                contentContainerStyle={{ paddingBottom: 100 }}
+            >
+                {/* Header dengan Logo */}
+                <LogoHeader />
+                {/* Search Bar */}
+                <SearchBar />
+
+                {/* Top Items Section */}
+                {itemsLoading ? (
+                    <View
+                        style={{
+                            paddingLeft: isTablet ? 32 : 20,
+                            marginBottom: isTablet ? 32 : 24,
+                        }}
+                    >
+                        <ActivityIndicator
+                            size="large"
+                            color={colors.primary}
+                            style={{ marginTop: 20 }}
+                        />
+                    </View>
+                ) : itemsError ? (
+                    <Text>{itemsError.toString()}</Text>
+                ) : (
+                    <TopItemLayouts menus={topItems} />
+                )}
+
+                {/* Categories Section */}
+                <CategoriesLayouts />
+                {/* Bottom */}
+                <BottomTopItems />
+            </ScrollView>
+        </SafeAreaView>
     );
 }

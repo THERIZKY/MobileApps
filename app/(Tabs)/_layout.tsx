@@ -1,4 +1,6 @@
-import { Icons } from "@/constant/icons";
+import { TabIconType } from "@/interface/interface";
+import { COLORS } from "@/src/constant/colors";
+import { Icons } from "@/src/constant/icons";
 import { Tabs } from "expo-router";
 import React from "react";
 import { Text, View } from "react-native";
@@ -38,7 +40,7 @@ const TabsLayouts = () => {
                 },
 
                 tabBarStyle: {
-                    backgroundColor: "#131D4F",
+                    backgroundColor: COLORS.dark.surface,
                     // borderRadius: 50,
                     // marginHorizontal: 10,
                     // marginBottom: 36,
@@ -46,7 +48,7 @@ const TabsLayouts = () => {
                     position: "absolute",
                     overflow: "hidden",
                     // borderWidth: 2,
-                    borderColor: "#254D70",
+                    borderColor: COLORS.dark.textSecondary,
                 },
             }}
         >

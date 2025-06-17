@@ -1,88 +1,62 @@
-import MovieCard from "@/components/MovieCard";
-import { fetchMovies } from "@/services/api";
-import useFetch from "@/services/useFetch";
-import React, { useMemo } from "react";
-import {
-    ActivityIndicator,
-    FlatList,
-    Text,
-    useWindowDimensions,
-    View,
-} from "react-native";
+import { MenuItem } from "@/interface/interface";
+import TopItemCard from "@/src/components/common/TopItemIcons";
+import { useCart } from "@/src/hooks/useCart";
+import { useDevice } from "@/src/hooks/useDevice";
+import { useTheme } from "@/src/hooks/useTheme";
+import { fetchMenus } from "@/src/services/api";
+import useFetch from "@/src/services/useFetch";
+import React from "react";
+import { FlatList, Text, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
-const MenusScreen = () => {
-    const { width } = useWindowDimensions();
-    const numColumns = useMemo(() => (width >= 768 ? 4 : 2), [width]);
+export default function MenuScreen({ menus }: { menus: MenuItem[] }) {
+    const { colors } = useTheme();
+    const { isTablet } = useDevice();
+    const { addItem } = useCart();
+
+    const handleItemPress = (item: MenuItem) => {
+        addItem(item);
+        // console.log("Added to cart:", item.name);
+    };
 
     const {
-        data: items,
-        loading: moviesLoading,
-        error: moviesError,
-    } = useFetch(() => fetchMovies({ query: "?pageSize=50" }));
-
-    // Render item memoized for performance
-    const renderItem = useMemo(
-        () =>
-            ({ item }: { item: ProductsCardProps }) =>
-                <MovieCard {...item} />,
-        []
-    );
-
-    // Header component memoized
-    const ListHeader = useMemo(
-        () => (
-            <View className="mb-4">
-                <Text className="text-2xl text-white font-bold text-center">
-                    All Menus
-                </Text>
-            </View>
-        ),
-        []
-    );
-
-    if (moviesLoading) {
-        return (
-            <View className="flex-1 bg-gray-900 justify-center">
-                <ActivityIndicator size="large" color="#ffffff" />
-            </View>
-        );
-    }
-
-    if (moviesError) {
-        return (
-            <View className="flex-1 bg-gray-900 justify-center items-center">
-                <Text className="text-red-500 text-lg">{moviesError}</Text>
-            </View>
-        );
-    }
+        data: topItems,
+        loading: itemsLoading,
+        error: itemsError,
+    } = useFetch(() => fetchMenus({ query: "?pageSize=50" }));
 
     return (
-        <View className="flex-1 bg-gray-900 pt-5">
-            <FlatList
-                data={items}
-                key={`list-${numColumns}`} // Reset on column change
-                numColumns={numColumns}
-                keyExtractor={(item) => item.id.toString()}
-                ListHeaderComponent={ListHeader}
-                renderItem={renderItem}
-                contentContainerStyle={{ paddingBottom: 80 }}
-                columnWrapperStyle={
-                    numColumns > 1
-                        ? {
-                              justifyContent: "space-between",
-                              paddingHorizontal: 16,
-                              gap: 8,
-                              marginBottom: 24,
-                          }
-                        : undefined
-                }
-                initialNumToRender={8}
-                maxToRenderPerBatch={6}
-                windowSize={11}
-                showsVerticalScrollIndicator={false}
-            />
-        </View>
+        <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }}>
+            <View
+                style={{
+                    flex: 1,
+                    justifyContent: "center",
+                    alignItems: "center",
+                    padding: isTablet ? 40 : 20,
+                }}
+            >
+                <FlatList
+                    data={topItems}
+                    numColumns={isTablet ? 3 : 2}
+                    keyExtractor={(item) => item.id.toString()}
+                    contentContainerStyle={{
+                        paddingBottom: isTablet ? 40 : 20,
+                        gap: isTablet ? 25 : 20,
+                    }}
+                    showsVerticalScrollIndicator={false}
+                    ListHeaderComponent={() => (
+                        <View style={{ marginBottom: 20 }}>
+                            {/* You can add a header component here if needed */}
+                            <Text className="text-center text-3xl font-bold text-white">
+                                All Menus
+                            </Text>
+                        </View>
+                    )}
+                    renderItem={({ item }) => (
+                        <TopItemCard item={item} onPress={handleItemPress} />
+                    )}
+                />
+            </View>
+        </SafeAreaView>
     );
-};
-
-export default MenusScreen;
+}

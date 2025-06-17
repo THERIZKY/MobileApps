@@ -1,5 +1,6 @@
 // import { icons } from "@/constants/icons";
 import { Link } from "expo-router";
+import { memo } from "react";
 import { Image, Text, TouchableOpacity } from "react-native";
 
 const MovieCard = ({ id, image_url, name }: ProductsCardProps) => {
@@ -12,6 +13,7 @@ const MovieCard = ({ id, image_url, name }: ProductsCardProps) => {
                     }}
                     className="w-full h-32 rounded-lg mb-2"
                     resizeMode="cover"
+                    fadeDuration={200}
                     alt={`${name} poster`}
                 />
                 <Text
@@ -25,4 +27,4 @@ const MovieCard = ({ id, image_url, name }: ProductsCardProps) => {
     );
 };
 
-export default MovieCard;
+export default memo(MovieCard);
