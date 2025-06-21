@@ -10,18 +10,19 @@ interface ThemeContextType {
     setTheme: (theme: "light" | "dark" | "system") => void;
 }
 
-export const ThemeContext = createContext<ThemeContextType | undefined>(
-    undefined
-);
-
 interface ThemeProviderProps {
     children: ReactNode;
 }
+
+export const ThemeContext = createContext<ThemeContextType | undefined>(
+    undefined
+);
 
 export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
     const [themeMode, setThemeMode] = useState<"light" | "dark" | "system">(
         "system"
     );
+
     const [systemColorScheme, setSystemColorScheme] = useState<ColorSchemeName>(
         Appearance.getColorScheme()
     );

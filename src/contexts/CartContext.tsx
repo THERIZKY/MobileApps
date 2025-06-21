@@ -7,11 +7,9 @@ interface CartState {
     itemCount: number;
 }
 
-type CartAction =
-    | { type: "ADD_ITEM"; payload: MenuItem }
-    | { type: "REMOVE_ITEM"; payload: string }
-    | { type: "UPDATE_QUANTITY"; payload: { id: string; quantity: number } }
-    | { type: "CLEAR_CART" };
+interface CartProviderProps {
+    children: ReactNode;
+}
 
 interface CartContextType extends CartState {
     addItem: (item: MenuItem) => void;
@@ -19,6 +17,12 @@ interface CartContextType extends CartState {
     updateQuantity: (id: string, quantity: number) => void;
     clearCart: () => void;
 }
+
+type CartAction =
+    | { type: "ADD_ITEM"; payload: MenuItem }
+    | { type: "REMOVE_ITEM"; payload: string }
+    | { type: "UPDATE_QUANTITY"; payload: { id: string; quantity: number } }
+    | { type: "CLEAR_CART" };
 
 export const CartContext = createContext<CartContextType | undefined>(
     undefined
@@ -89,10 +93,6 @@ const calculateTotals = (
 
     return { ...state, total, itemCount };
 };
-
-interface CartProviderProps {
-    children: ReactNode;
-}
 
 export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
     const [state, dispatch] = useReducer(cartReducer, {

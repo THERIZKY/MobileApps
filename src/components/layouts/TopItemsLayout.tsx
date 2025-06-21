@@ -7,57 +7,17 @@ import React from "react";
 import { FlatList, Text, TouchableOpacity, View } from "react-native";
 import TopItemCard from "../common/TopItemIcons";
 
-// const mockTopItems: MenuItem[] = [
-//     {
-//         id: "1",
-//         name: "Burger Deluxe",
-//         description: "Beef burger with cheese and vegetables",
-//         price: 15.99,
-//         image_url:
-//             "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=300&h=200&fit=crop",
-//         category: "burgers",
-//         available: true,
-//     },
-//     {
-//         id: "2",
-//         name: "Chicken Wings",
-//         description: "Spicy buffalo chicken wings",
-//         price: 12.99,
-//         image_url:
-//             "https://images.unsplash.com/photo-1527477396000-e27163b481c2?w=300&h=200&fit=crop",
-//         category: "chicken",
-//         available: true,
-//     },
-//     {
-//         id: "3",
-//         name: "Pizza Margherita",
-//         description: "Classic pizza with tomato and mozzarella",
-//         price: 18.99,
-//         image_url:
-//             "https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?w=300&h=200&fit=crop",
-//         category: "pizza",
-//         available: true,
-//     },
-//     {
-//         id: "4",
-//         name: "Caesar Salad",
-//         description: "Fresh lettuce with caesar dressing",
-//         price: 10.99,
-//         image_url:
-//             "https://images.unsplash.com/photo-1546793665-c74683f339c1?w=300&h=200&fit=crop",
-//         category: "salads",
-//         available: true,
-//     },
-// ];
-
 const TopItemsLayout = ({ menus }: { menus: MenuItem[] }) => {
     const { isTablet, dimensions } = useDevice();
     const { colors } = useTheme();
-    const { addItem } = useCart();
+    const { addItem, updateQuantity } = useCart();
 
-    const handleItemPress = (item: MenuItem) => {
+    const handleItemPress = (item: MenuItem, quantity: number) => {
+        // Tambahkan item ke cart
         addItem(item);
-        // console.log("Added to cart:", item.name);
+
+        // update quantity sesuai pilihan user
+        updateQuantity(item.id, quantity);
     };
 
     return (

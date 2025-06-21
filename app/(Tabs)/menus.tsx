@@ -12,11 +12,14 @@ import { SafeAreaView } from "react-native-safe-area-context";
 export default function MenuScreen({ menus }: { menus: MenuItem[] }) {
     const { colors } = useTheme();
     const { isTablet } = useDevice();
-    const { addItem } = useCart();
+    const { addItem, updateQuantity } = useCart();
 
-    const handleItemPress = (item: MenuItem) => {
+    const handleItemPress = (item: MenuItem, quantity: number) => {
+        // Tambahkan item ke cart
         addItem(item);
-        // console.log("Added to cart:", item.name);
+
+        // update quantity sesuai pilihan user
+        updateQuantity(item.id, quantity);
     };
 
     const {

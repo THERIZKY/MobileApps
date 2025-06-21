@@ -3,7 +3,7 @@ import { Link } from "expo-router";
 import { memo } from "react";
 import { Image, Text, TouchableOpacity } from "react-native";
 
-const MovieCard = ({ id, image_url, name }: ProductsCardProps) => {
+const MovieCard = ({ id, image_url, name }: any) => {
     return (
         <Link href={".."} asChild>
             <TouchableOpacity className="w-full max-w-[150px]">
