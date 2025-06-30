@@ -24,7 +24,8 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
     );
 
     const [systemColorScheme, setSystemColorScheme] = useState<ColorSchemeName>(
-        Appearance.getColorScheme()
+        // Appearance.getColorScheme()
+        "dark"
     );
 
     useEffect(() => {

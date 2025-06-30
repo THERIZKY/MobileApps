@@ -69,7 +69,7 @@ const TabsLayouts = () => {
                 }}
             />
             <Tabs.Screen
-                name="menus"
+                name="menus/[id]"
                 options={{
                     headerShown: false,
                     title: "Menus",

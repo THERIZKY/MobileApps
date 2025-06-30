@@ -4,12 +4,18 @@ import { push } from "expo-router/build/global-state/routing";
 import React from "react";
 import { FlatList, Text, TouchableOpacity, View } from "react-native";
 
-const mockCategories = [
-    { key: "burgers", label: "Burgers", icon: "🍔" },
-    { key: "chicken", label: "Chicken", icon: "🍗" },
-    { key: "pizza", label: "Pizza", icon: "🍕" },
-    { key: "salads", label: "Salads", icon: "🥗" },
-    { key: "drinks", label: "Drinks", icon: "🥤" },
+interface Category {
+    key: string;
+    label: string;
+    icon: string;
+}
+
+const Categories: Category[] = [
+    { key: "all", label: "All", icon: "🍽️" },
+    { key: "sandwiches", label: "Sandwiches", icon: "🥪" },
+    { key: "non-coffee", label: "Non-Coffee", icon: "🍷" },
+    { key: "pastries", label: "Pastries", icon: "🥐" },
+    { key: "coffee", label: "Coffee", icon: "☕" },
     { key: "desserts", label: "Desserts", icon: "🍰" },
 ];
 
@@ -44,15 +50,16 @@ const CategoriesLayouts = () => {
                 </Text>
             </View>
             <FlatList
-                data={mockCategories}
+                data={Categories}
                 renderItem={({ item }) => (
                     <TouchableOpacity
-                        onPress={() => push(`/menus?category=${item.key}`)}
+                        onPress={() => push(`/menus/${item.key}`)}
                         style={{
                             alignItems: "center",
                             marginRight: 20,
                             backgroundColor: colors.surface,
                             borderRadius: 12,
+                            width: isTablet ? 120 : 100,
                             paddingVertical: isTablet ? 18 : 12,
                             paddingHorizontal: isTablet ? 20 : 14,
                             shadowColor: "#000",
