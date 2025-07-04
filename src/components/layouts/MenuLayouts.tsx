@@ -5,6 +5,7 @@ import { useDevice } from "@/src/hooks/useDevice";
 import { useTheme } from "@/src/hooks/useTheme";
 import { fetchMenus } from "@/src/services/api";
 import useFetch from "@/src/services/useFetch";
+import { useFocusEffect } from "@react-navigation/native";
 import React, { useEffect } from "react";
 import { ActivityIndicator, FlatList, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -14,6 +15,19 @@ export default function MenuLayoutsScreen({ category }: { category?: string }) {
     const { isTablet } = useDevice();
     const { addItem, updateQuantity } = useCart();
     const [cardData, setCardData] = React.useState<MenuItem[]>([]);
+    const flatListRef = React.useRef<FlatList<MenuItem>>(null);
+
+    useFocusEffect(
+        React.useCallback(() => {
+            // Auto scroll to top ketika screen di-focus
+            if (flatListRef.current) {
+                flatListRef.current.scrollToOffset({
+                    offset: 0,
+                    animated: true,
+                });
+            }
+        }, [])
+    );
 
     const handleItemPress = (item: MenuItem, quantity: number) => {
         // Tambahkan item ke cart
@@ -29,23 +43,38 @@ export default function MenuLayoutsScreen({ category }: { category?: string }) {
         error: itemsError,
     } = useFetch(() => fetchMenus({ query: "?pageSize=50" }));
 
-    console.log("Category:", topItems);
+    useEffect(() => {
+        setCardData(topItems || []);
+    }, []);
 
     useEffect(() => {
+        if (flatListRef.current) {
+            flatListRef.current.scrollToOffset({
+                offset: 0,
+                animated: true,
+            });
+        }
+
         // Jika category tidak ada, set ke "all"
         if (!category) {
             category = "all";
         }
 
-        // Filter topItems berdasarkan category
-        if (topItems && category !== "all") {
-            setCardData(
-                topItems.filter(
-                    (item: MenuItem) => item.category.toLowerCase() === category
-                )
-            );
-        } else {
-            setCardData(topItems || []);
+        switch (category) {
+            case "all":
+                setCardData(topItems || []);
+                break;
+            default:
+                // Filter topItems berdasarkan category
+                if (topItems && category !== "all") {
+                    setCardData(
+                        topItems.filter(
+                            (item: MenuItem) =>
+                                item.category.toLowerCase() === category
+                        )
+                    );
+                }
+                break;
         }
     }, [category]);
 
@@ -76,6 +105,7 @@ export default function MenuLayoutsScreen({ category }: { category?: string }) {
                     }}
                 >
                     <FlatList
+                        ref={flatListRef}
                         data={cardData}
                         numColumns={isTablet ? 3 : 2}
                         keyExtractor={(item) => item.id.toString()}

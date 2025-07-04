@@ -11,7 +11,6 @@ interface Category {
 }
 
 const Categories: Category[] = [
-    { key: "all", label: "All", icon: "🍽️" },
     { key: "sandwiches", label: "Sandwiches", icon: "🥪" },
     { key: "non-coffee", label: "Non-Coffee", icon: "🍷" },
     { key: "pastries", label: "Pastries", icon: "🥐" },

@@ -183,7 +183,6 @@ export default function CartScreen() {
     };
 
     if (items.length === 0) {
-        console.log(colors.background);
         return (
             <SafeAreaView
                 style={{ flex: 1, backgroundColor: colors.background }}

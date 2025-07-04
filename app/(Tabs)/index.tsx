@@ -56,6 +56,7 @@ export default function HomeScreen() {
 
                 {/* Categories Section */}
                 <CategoriesLayouts />
+
                 {/* Bottom */}
                 <BottomTopItems />
             </ScrollView>

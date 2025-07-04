@@ -173,10 +173,6 @@ const TopItemCard = ({
                                 onPress={() => {
                                     if (quantity > 1) {
                                         setQuantity(quantity - 1);
-                                        console.log(
-                                            "Decreased quantity to:",
-                                            quantity - 1
-                                        );
                                     }
                                 }}
                                 style={{
